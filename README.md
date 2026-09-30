@@ -143,6 +143,8 @@ Rules for paths:
 - They must be absolute and use only letters, numbers and `. _ - /`, with no `.` or `..` components.
 - Paths that don't exist on a machine are skipped without a warning, so one config can be shared across servers.
 - A scan **stays on one filesystem**. If `/var/log` is a separate disk, scanning `/var` won't include it, so list it separately.
+- - **Don't list a folder together with one of its parents on the same disk.** `( "/var" "/var/log" )` or `( "/" "/var" )` scans the inner folder twice and reports its growth twice. List the parent only.
+- `( "/" )` works and covers everything on the root disk, but the scan takes longer and needs more memory (roughly 170 MiB per 250,000 files). Time the first run, and raise `TOP_CHANGES` (see below).
 
 Then take the first scan and note how long it takes:
 
@@ -205,7 +207,7 @@ All settings are variables near the top of the script. Sizes are in bytes and ti
 |---|---|---|
 | `NEW_ENTRY_MIN_BYTES` | `10485760` | Smallest NEW file or folder listed (10 MiB). |
 | `GROWTH_MIN_BYTES` | `1048576` | Smallest growth listed (1 MiB). |
-| `TOP_CHANGES` | `15` | Most changes listed per scanned folder. |
+| `TOP_CHANGES` | `15` | Most changes listed per scanned folder. Each parent folder of something that grew takes a line too, so raise this to 25–30 when you scan a large folder such as `/`. |
 | `ALERT_COOLDOWN_SECS` | `86400` | Minimum time between alerts (24 h). |
 | `SCAN_RETENTION_DAYS` | `7` | Saved scans older than this are deleted. |
 
