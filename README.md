@@ -143,7 +143,7 @@ Rules for paths:
 - They must be absolute and use only letters, numbers and `. _ - /`, with no `.` or `..` components.
 - Paths that don't exist on a machine are skipped without a warning, so one config can be shared across servers.
 - A scan **stays on one filesystem**. If `/var/log` is a separate disk, scanning `/var` won't include it, so list it separately.
-- - **Don't list a folder together with one of its parents on the same disk.** `( "/var" "/var/log" )` or `( "/" "/var" )` scans the inner folder twice and reports its growth twice. List the parent only.
+- **Don't list a folder together with one of its parents on the same disk.** `( "/var" "/var/log" )` or `( "/" "/var" )` scans the inner folder twice and reports its growth twice. List the parent only.
 - `( "/" )` works and covers everything on the root disk, but the scan takes longer and needs more memory (roughly 170 MiB per 250,000 files). Time the first run, and raise `TOP_CHANGES` (see below).
 
 Then take the first scan and note how long it takes:
