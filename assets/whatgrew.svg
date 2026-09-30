@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="t">
+  <title id="t">whatgrew</title>
+  <defs>
+    <radialGradient id="sea" cx="50%" cy="42%" r="60%">
+      <stop offset="0" stop-color="#15406A"/>
+      <stop offset="1" stop-color="#0A1F36"/>
+    </radialGradient>
+    <clipPath id="b"><circle cx="256" cy="262" r="116"/></clipPath>
+  </defs>
+
+  <!-- badge + disk usage gauge (90%: green / amber / red) -->
+  <circle cx="256" cy="256" r="254" fill="url(#sea)"/>
+  <path d="M256.0 22.0A234 234 0 1 1 33.5 328.3" fill="none" stroke="#2EA043" stroke-width="14"/>
+  <path d="M30.9 319.9A234 234 0 0 1 66.7 118.5" fill="none" stroke="#D29922" stroke-width="14"/>
+  <path d="M72.0 111.4A234 234 0 0 1 118.5 66.7" fill="none" stroke="#DA3633" stroke-width="14"/>
+  <path d="M125.7 61.6A234 234 0 0 1 247.2 22.2" fill="none" stroke="#4A6F94" stroke-width="14"/>
+
+  <!-- spines -->
+  <path d="M366.0 264.5L401.5 273.5L365.0 276.7ZM364.2 281.7L398.0 296.1L361.4 293.6ZM359.8 298.4L390.9 317.9L355.1 309.7ZM352.9 314.1L380.5 338.3L346.4 324.6ZM343.5 328.7L367.0 356.8L335.5 338.0ZM332.0 341.5L350.8 373.0L322.7 349.5ZM318.6 352.4L332.3 386.5L308.1 358.9ZM303.7 361.1L311.9 396.9L292.4 365.8ZM287.6 367.4L290.1 404.0L275.7 370.2ZM270.7 371.0L267.5 407.5L258.5 372.0ZM253.5 372.0L244.5 407.5L241.3 371.0ZM236.3 370.2L221.9 404.0L224.4 367.4ZM219.6 365.8L200.1 396.9L208.3 361.1ZM203.9 358.9L179.7 386.5L193.4 352.4ZM189.3 349.5L161.2 373.0L180.0 341.5ZM176.5 338.0L145.0 356.8L168.5 328.7ZM165.6 324.6L131.5 338.3L159.1 314.1ZM156.9 309.7L121.1 317.9L152.2 298.4ZM150.6 293.6L114.0 296.1L147.8 281.7ZM147.0 276.7L110.5 273.5L146.0 264.5ZM146.0 259.5L110.5 250.5L147.0 247.3ZM147.8 242.3L114.0 227.9L150.6 230.4ZM152.2 225.6L121.1 206.1L156.9 214.3ZM159.1 209.9L131.5 185.7L165.6 199.4ZM168.5 195.3L145.0 167.2L176.5 186.0ZM180.0 182.5L161.2 151.0L189.3 174.5ZM193.4 171.6L179.7 137.5L203.9 165.1ZM208.3 162.9L200.1 127.1L219.6 158.2ZM224.4 156.6L221.9 120.0L236.3 153.8ZM241.3 153.0L244.5 116.5L253.5 152.0ZM258.5 152.0L267.5 116.5L270.7 153.0ZM275.7 153.8L290.1 120.0L287.6 156.6ZM292.4 158.2L311.9 127.1L303.7 162.9ZM308.1 165.1L332.3 137.5L318.6 171.6ZM322.7 174.5L350.8 151.0L332.0 182.5ZM335.5 186.0L367.0 167.2L343.5 195.3ZM346.4 199.4L380.5 185.7L352.9 209.9ZM355.1 214.3L390.9 206.1L359.8 225.6ZM361.4 230.4L398.0 227.9L364.2 242.3ZM365.0 247.3L401.5 250.5L366.0 259.5Z" fill="#B08340"/>
+
+  <!-- body, countershaded -->
+  <circle cx="256" cy="262" r="116" fill="#D6A758"/>
+  <g clip-path="url(#b)">
+    <path d="M140 296 C196 326 316 326 372 296 L372 378 L140 378 Z" fill="#EEDDB2"/>
+    <g fill="#4A3825"><circle cx="256" cy="168" r="10"/><circle cx="222" cy="176" r="8"/><circle cx="290" cy="176" r="8"/><circle cx="172" cy="190" r="6"/><circle cx="340" cy="190" r="6"/><circle cx="256" cy="200" r="7"/><circle cx="160" cy="236" r="7"/><circle cx="352" cy="236" r="7"/><circle cx="172" cy="272" r="6"/><circle cx="340" cy="272" r="6"/><circle cx="236" cy="152" r="5"/><circle cx="276" cy="152" r="5"/></g>
+  </g>
+
+  <!-- pectoral fins -->
+  <path d="M154 252 C128 232 106 232 98 244 C92 262 94 286 104 298 C116 304 136 292 154 276 Z" fill="#C19244"/><path d="M150 264 L104 248 M150 264 L98 270 M150 264 L108 292" stroke="#B08340" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M358 252 C384 232 406 232 414 244 C420 262 418 286 408 298 C396 304 376 292 358 276 Z" fill="#C19244"/><path d="M362 264 L408 248 M362 264 L414 270 M362 264 L404 292" stroke="#B08340" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- eyes, looking straight ahead -->
+  <circle cx="204" cy="226" r="31" fill="#2A1D10"/><circle cx="204" cy="226" r="25" fill="#9AA65A"/><circle cx="204" cy="226" r="14" fill="#0B0B0B"/><circle cx="197" cy="219" r="4.5" fill="#FFFFFF" opacity="0.85"/>
+  <circle cx="308" cy="226" r="31" fill="#2A1D10"/><circle cx="308" cy="226" r="25" fill="#9AA65A"/><circle cx="308" cy="226" r="14" fill="#0B0B0B"/><circle cx="301" cy="219" r="4.5" fill="#FFFFFF" opacity="0.85"/>
+
+  <!-- beak -->
+  <path d="M228 290 C228 280 240 274 256 274 C272 274 284 280 284 290 C284 302 272 310 256 310 C240 310 228 302 228 290 Z" fill="#EEDDB2"/>
+  <path d="M230 292 C242 296 270 296 282 292" stroke="#4A3825" stroke-width="3" stroke-linecap="round" fill="none"/>
+</svg>
