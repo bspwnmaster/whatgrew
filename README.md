@@ -37,6 +37,10 @@ It's a single bash script run by cron. It needs no agent, daemon or database. Th
 
 ## How it works
 
+<h1>
+  <img src="assets/whatgrew.svg" width="200" valign="middle" alt="Mascot">
+</h1> 
+
 Two cron jobs run the same script:
 
 - **Every hour**, `whatgrew.sh` checks every real disk with `duf`, which takes milliseconds. If nothing is at or over the threshold, it exits without output. If a disk is, it rescans your chosen folders with `ncdu`, compares them with the last saved scan, and sends an alert. It sends **at most one alert every 24 hours**.
