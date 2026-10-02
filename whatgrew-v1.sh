@@ -41,12 +41,12 @@
 #   - CACHE_DIR is created 0700 and every file in it 0600 (umask 077):
 #     ncdu exports map your full filesystem, including other users' files.
 #   - PATH is pinned below so a root cron job never runs a planted binary.
-#   - CACHE_DIR's parent directory must remain root-only-writable:
-#     prepare_cache_dir() checks CACHE_DIR itself is a non-symlink,
-#     self-owned directory once at startup, but does not re-verify before
-#     every later open. If CACHE_DIR is ever pointed at a path whose
-#     parent a non-root user can write to, that single check-then-use gap
-#     becomes exploitable (symlink swap between check and use).
+#   - CACHE_DIR's parent directory must be writable only by root:
+#     prepare_cache_dir() refuses to run if the parent is a symlink, is
+#     not owned by the running user, or is group/world-writable, so no
+#     other user can swap CACHE_DIR for a symlink. As defense-in-depth,
+#     check_cache_dir() re-verifies CACHE_DIR (plain directory, self-owned)
+#     right before each later write into it (lock, alert stamp, exports).
 #   - ALERT_EMAIL delivery pipes the report into mail(1)/s-nail via stdin,
 #     which can embed local-user-controlled filenames (from ncdu). This
 #     assumes the mail client has '~' tilde-escape command processing
@@ -198,17 +198,31 @@ is_timeout() {
 }
 
 # Create CACHE_DIR as a root-only directory and refuse to use it if it is a
-# symlink, owned by someone else, or writable by group/other.
+# symlink or owned by someone else. Its parent must also be ours and not
+# group/world-writable: otherwise another user could swap CACHE_DIR for a
+# symlink between these checks and our later writes (CWE-367).
 prepare_cache_dir() {
+    local parent parent_mode
     install -d -m 700 "$CACHE_DIR"
+    parent=$(dirname -- "$CACHE_DIR")
+    [[ -d "$parent" && ! -L "$parent" ]] || die "$parent (parent of $CACHE_DIR) is not a plain directory"
+    [[ -O "$parent" ]] || die "$parent (parent of $CACHE_DIR) is not owned by $(id -un)"
+    parent_mode=$(stat -c %a -- "$parent" 2>/dev/null || echo 777)
+    (( 8#$parent_mode & 8#022 )) && die "$parent (parent of $CACHE_DIR) is group- or world-writable"
+    check_cache_dir
+    chmod 700 "$CACHE_DIR"
+}
+
+# Re-verify CACHE_DIR right before writing into it.
+check_cache_dir() {
     [[ -d "$CACHE_DIR" && ! -L "$CACHE_DIR" ]] || die "$CACHE_DIR is not a plain directory"
     [[ -O "$CACHE_DIR" ]] || die "$CACHE_DIR is not owned by $(id -un)"
-    chmod 700 "$CACHE_DIR"
 }
 
 # Serialize runs: the 03:00 --scan job and the hourly alert job must never
 # write the same ncdu export at the same time.
 take_run_lock() {
+    check_cache_dir
     exec 9>"$RUN_LOCK_FILE"
     flock -w "$RUN_LOCK_WAIT_SECS" 9 || die "another whatgrew run still holds $RUN_LOCK_FILE"
 }
@@ -229,6 +243,7 @@ can_alert() {
 }
 
 mark_alerted() {
+    check_cache_dir
     touch "$ALERT_STAMP_FILE"
 }
 
@@ -269,6 +284,7 @@ mark_alerted() {
 # line in a mail client.
 readonly JQ_CLEAN='
     def clean: gsub("[\\p{Cc}\\p{Cf}\\p{Zl}\\p{Zp}]"; "?");
+    def num: if type == "number" then . else 0 end;
 '
 readonly JQ_MOUNT_DEFS="$JQ_CLEAN"'
     def real_mounts:
@@ -423,6 +439,7 @@ scan_cache() {   # scan_cache <per-path limit in seconds>
         run_limited "$limit" ncdu -0xo "$tmp" "$path" || ncdu_rc=$?
         SCAN_DURATIONS["$path"]=$(( SECONDS - t0 ))
         if (( ncdu_rc == 0 )); then
+            check_cache_dir
             mv -f -- "$tmp" "$file"
             unset 'SCAN_FAILED[$path]'
         else
@@ -456,10 +473,10 @@ readonly NCDU_FLATTEN="$JQ_CLEAN"'
             .[0] as $m
             | (if $p == null then ($m.name | clean | rtrimstr("/"))
                else $p + "/" + ($m.name | clean) end) as $d
-            | "D\t\($m.dsize // 0)\t\($d)",
+            | "D\t\($m.dsize | num)\t\($d)",
               (.[1:][] | walk($d))
         elif type == "object" then
-            "F\t\(.dsize // 0)\t\($p)/\(.name | clean)"
+            "F\t\(.dsize | num)\t\($p)/\(.name | clean)"
         else empty end;
     .[3] | walk(null)
 '
