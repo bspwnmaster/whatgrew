@@ -37,10 +37,6 @@ It's a single bash script run by cron. It needs no agent, daemon or database. Th
 
 ## How it works
 
-<h1>
-  <img src="assets/whatgrew.svg" width="200" valign="middle" alt="Mascot">
-</h1> 
-
 Two cron jobs run the same script:
 
 - **Every hour**, `whatgrew.sh` checks every real disk with `duf`, which takes milliseconds. If nothing is at or over the threshold, it exits without output. If a disk is, it rescans your chosen folders with `ncdu`, compares them with the last saved scan, and sends an alert. It sends **at most one alert every 24 hours**.
@@ -404,7 +400,7 @@ sudo rm -r /var/lib/whatgrew
 
 whatgrew runs as root, so it's written with that in mind:
 
-- **Private scan data:** saved scans list every filename on the scanned disks, including those in other users' home folders. `CACHE_DIR` is mode `700`, and every file in it is `600`. whatgrew refuses a `CACHE_DIR` that is a symlink, owned by someone else, or writable by others. Keep its parent folder (`/var/lib`) writable only by root.
+- **Private scan data:** saved scans list every filename on the scanned disks, including those in other users' home folders. `CACHE_DIR` is mode `700`, and every file in it is `600`. whatgrew refuses a `CACHE_DIR` that is a symlink or owned by someone else, and refuses to run if the parent folder of `CACHE_DIR` is owned by someone else or writable by group or others. The default parent, `/var/lib`, is writable only by root, so never put `CACHE_DIR` under a shared folder like `/tmp`.
 - **The alert shows other people's filenames:** it lists paths from the scanned folders. Send it only to people who may see that.
 - **Fixed `PATH`:** `PATH` is set inside the script, so a program placed earlier in root's `PATH` can't be run in place of `duf`, `jq` and the others.
 - **Names can't fake report lines:** control characters and invisible Unicode characters (bidirectional-text overrides, zero-width characters, line separators) in filenames and mount points are shown as `?`. Nobody can add fake lines to the alert or disguise a path.
